@@ -44,7 +44,7 @@
 								if($row['role'] == 1):
 									echo '<span class="badge badge-primary">Administrador</span>';
 								else:
-									echo '<span class="badge badge-secondary">Usuario</span>';
+									echo '<span class="badge badge-success">Usuario</span>';
 								endif;
 								?>
 							</td>

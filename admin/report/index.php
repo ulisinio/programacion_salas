@@ -1,4 +1,7 @@
 <?php 
+// Asegúrate de establecer la localización en español para que strftime() funcione correctamente.
+setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'esp'); 
+
 $dstart = isset($_GET['dstart']) ? $_GET['dstart'] : date("Y-m-d", strtotime(date("Y-m-d")." -1 week"));
 $dend = isset($_GET['dend']) ? $_GET['dend'] : date("Y-m-d");
 $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
@@ -13,7 +16,7 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
 	<div class="card-body">
 		<div class="container-fluid">
         <form action="" id="filter">
-            <div class="d-flex  h-100 d-flex align-items-end">
+            <div class="d-flex h-100 d-flex align-items-end">
                 <div class="form-group col-3">
                     <label for="start" class="control-label">Fecha Inicio</label>
                     <input type="date" name="start" id="start" value="<?php echo $dstart ?>" class="form-control">
@@ -31,7 +34,6 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
                         while($row= $aqry->fetch_assoc()):
                         ?>
                         <option value="<?php echo $row['id'] ?>" <?php echo $rid ==  $row['id']  ? "selected" : "" ?>><?php echo $row['room_name'] ?></option>
-
                         <?php endwhile; ?>
                     </select>
                 </div>
@@ -64,30 +66,29 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
 				<tbody>
 					<?php 
 					$i = 1;
-                        $where = "";
-                        $rname = "";
+                    $where = "";
+                    $rname = "";
+                    if($rid > 0){
+                        $where = " and a.id = '{$rid}'";
+                    }
+					$qry = $conn->query("SELECT s.*,a.room_name, a.description from `schedule_list` s inner join `assembly_hall` a on a.id = s.assembly_hall_id where ((date(datetime_start) BETWEEN '{$dstart}' and '{$dend}' ) OR (date(datetime_end) BETWEEN '{$dstart}' and '{$dend}' )) {$where} order by unix_timestamp(datetime_start) asc, unix_timestamp(datetime_end) asc ");
+					while($row = $qry->fetch_assoc()):
                         if($rid > 0){
-                            $where = " and a.id = '{$rid}'";
+                            $rname = $row['room_name'];
                         }
-						$qry = $conn->query("SELECT s.*,a.room_name, a.description from `schedule_list` s inner join `assembly_hall` a on a.id = s.assembly_hall_id where ((date(datetime_start) BETWEEN '{$dstart}' and '{$dend}' ) OR (date(datetime_end) BETWEEN '{$dstart}' and '{$dend}' )) {$where} order by unix_timestamp(datetime_start) asc, unix_timestamp(datetime_end) asc ");
-						while($row = $qry->fetch_assoc()):
-                            if($rid > 0){
-                                $rname = $row['room_name'];
-                            }
 					?>
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td>
                                 <p class="m-0">
-                                    <small><b>Inicio:</b> <?php echo date("M d, Y h:i A",strtotime($row['datetime_start'])) ?></small><br>
-                                    <small><b>Fin:</b> <?php echo date("M d, Y h:i A",strtotime($row['datetime_end'])) ?></small>
+                                    <small><b>Inicio:</b> <?php echo strftime("%d de %B de %Y %I:%M %p", strtotime($row['datetime_start'])); ?></small><br>
+                                    <small><b>Fin:</b> <?php echo strftime("%d de %B de %Y %I:%M %p", strtotime($row['datetime_end'])); ?></small>
                                 </p>
                             </td>
 							<td ><?php echo $row['room_name'] ?></td>
 							<td ><?php echo $row['description'] ?></td>
 							<td ><?php echo ucwords($row['reserved_by']) ?></td>
 							<td ><?php echo $row['schedule_remarks'] ?></td>
-							</td>
 						</tr>
 					<?php endwhile; ?>
 				</tbody>
@@ -99,8 +100,7 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
 <script>
     window.DT_INIT = function(){
         $('#report-table').dataTable({
-            "lengthMenu":[ [ 50, 100, -1], [ 50, 100, "All"]],
-            "oreder": [[0,"asc"]]
+            "lengthMenu":[ [ 50, 100, -1], [ 50, 100, "All"]]
         })
     }
     $(function(){
@@ -113,7 +113,7 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
         })
         $('.select2').select2()
         DT_INIT()
-        // console.log($.fn.DataTable.isDataTable( '#report-table' ))
+        
         $('#print_now').click(function(){
             start_loader()
             if($.fn.DataTable.isDataTable( '#report-table' ) == true){
@@ -127,11 +127,11 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
                 _el.append("<h3 class='text-center'><?php echo $_settings->info('name') ?></h3>")
                 _el.append("<h4 class='text-center'>GRUPO LOPEZ ROSA</h4>")
                 if('<?php echo $dstart ?>' == '<?php echo $dend ?>')
-                    _el.append("<p class='text-center m-0'>Fecha: <?php echo date("F d, Y", strtotime($dstart)) ?></p>");
+                    _el.append("<p class='text-center m-0'>Fecha: <?php echo strftime('%d de %B de %Y', strtotime($dstart)) ?></p>");
                 else
-                    _el.append("<p class='text-center m-0'>Fecha: <?php echo date("F d, Y", strtotime($dstart)) ?> - <?php echo date("F d, Y", strtotime($dend)) ?></p>");
+                    _el.append("<p class='text-center m-0'>Fecha: <?php echo strftime('%d de %B de %Y', strtotime($dstart)) ?> - <?php echo strftime('%d de %B de %Y', strtotime($dend)) ?></p>");
                 if('<?php echo $rid ?>' > 0)
-                _el.append("<p class='text-center m-0'>For: <?php echo $rname ?></p>");
+                _el.append("<p class='text-center m-0'>Para: <?php echo $rname ?></p>");
                 _el.append("<hr/>")
                 _el.append(_p)
             var nw = window.open("","_blank","width=5000,heigth=5000,top=0,left=0")
