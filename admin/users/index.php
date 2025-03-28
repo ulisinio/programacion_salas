@@ -18,7 +18,7 @@
 				</colgroup>
 				<thead>
 					<tr>
-						<th>ID</th>
+						<th>#</th>
 						<th>Nombre</th>
 						<th>Apellido</th>
 						<th>Usuario</th>

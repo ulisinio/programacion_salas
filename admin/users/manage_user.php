@@ -14,6 +14,14 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
         <h3 class="card-title"><?php echo isset($id) ? "Actualizar " : "Crear Nuevo " ?> Usuario</h3>
     </div>
     <div class="card-body">
+        <?php if (isset($id)) { // Solo mostrar la alerta si estamos editando un usuario ?>
+            <!-- Alerta de información para la contraseña -->
+            <div class="alert alert-info" role="alert">
+                Si no deseas cambiar la contraseña, deja el campo vacío. 
+                <i class="fas fa-exclamation-circle"></i> <!-- Icono de alerta -->
+            </div>
+        <?php } ?>
+
         <form action="" id="user-form">
             <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
             <div class="form-group">
@@ -33,7 +41,14 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 
             <div class="form-group">
                 <label for="password" class="control-label">Contraseña</label>
-                <input type="password" name="password" id="password" class="form-control" value="<?php echo isset($password) ? $password : ''; ?>" required />
+                <div class="input-group">
+                    <input type="password" name="password" id="password" class="form-control" value="" /> <!-- Contraseña vacía por defecto -->
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="show-password">
+                            <i class="fas fa-eye"></i> <!-- Icono de ojo para mostrar/ocultar -->
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -52,12 +67,21 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 </div>
 
 <script>
+    // Script para manejar el envío del formulario
     $(document).ready(function(){
         $('#user-form').submit(function(e){
             e.preventDefault();
             var _this = $(this);
             $('.err-msg').remove();  // Limpiar mensajes de error previos
             start_loader();  // Inicia el loader
+
+            // Verificamos si el campo de contraseña está vacío
+            var password = $('#password').val();
+            if(password.trim() == "") {
+                // Si la contraseña está vacía, no la incluimos en el envío del formulario
+                // Lo que hacemos es eliminar el campo de la contraseña antes de enviar
+                $("input[name='password']").val("");
+            }
 
             $.ajax({
                 url: _base_url_ + "classes/usuaritos.php?f=save_user",  // Ruta para guardar el usuario
@@ -90,6 +114,18 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                 }
             });
         });
+
+        // Mostrar/ocultar la contraseña
+        $('#show-password').click(function(){
+            var passwordField = $('#password');
+            var type = passwordField.attr('type');
+            if(type == 'password') {
+                passwordField.attr('type', 'text');
+                $(this).find('i').removeClass('fas fa-eye').addClass('fas fa-eye-slash');
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).find('i').removeClass('fas fa-eye-slash').addClass('fas fa-eye');
+            }
+        });
     });
 </script>
-

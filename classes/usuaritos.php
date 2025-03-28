@@ -41,6 +41,9 @@ class Usuaritos extends DBConnection {
         // Si la contraseña no está vacía, la encriptamos con MD5
         if (!empty($_POST['password'])) {
             $_POST['password'] = md5($_POST['password']);  // Encriptamos la contraseña con MD5
+        } else {
+            // Si la contraseña está vacía, no la actualizamos
+            unset($_POST['password']);
         }
 
         // Preparamos los datos para la inserción o actualización

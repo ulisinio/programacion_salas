@@ -22,7 +22,7 @@
     <li class="nav-item d-none d-sm-inline-block">
       <a href="<?php echo base_url ?>" class="nav-link">
         <?php echo (!isMobileDevice()) ? $_settings->info('name') : $_settings->info('short_name'); ?> 
-        <?php if ($_settings->userdata('role') == 1) { echo " - ADMIN"; } ?> <!-- Solo agrega " - ADMIN" si es administrador -->
+        <?php if ($_settings->userdata('role') == 1) { echo " - MODO ADMINISTRADOR"; } ?> <!-- Solo agrega " - ADMIN" si es administrador -->
       </a>
     </li>
   </ul>
