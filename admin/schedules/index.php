@@ -7,7 +7,7 @@
 <style>
 #calendar {
     width: 100%;
-    height: 600px; /* Ajusta el alto según tus necesidades */
+    height: 550px; /* Ajusta el alto según tus necesidades */
 }
 #selectAll{
     top: 0;
@@ -48,11 +48,11 @@
                                 <input type="text" class="form-control" name="reserved_by" id="reserved_by" required>
                             </div>
                             <div class="form-group">
-                                <label for="datetime_start" class="control-label">Desde:</label>
+                                <label for="datetime_start" class="control-label">Fecha y Hora de inicio:</label>
                                 <input type="datetime-local" class="form-control" name="datetime_start" id="datetime_start">
                             </div>
                             <div class="form-group">
-                                <label for="datetime_end" class="control-label">Hasta:</label>
+                                <label for="datetime_end" class="control-label">Fecha y Hora de fin:</label>
                                 <input type="datetime-local" class="form-control" name="datetime_end" id="datetime_end">
                             </div>
                             <div class="form-group">
@@ -97,12 +97,75 @@ var scheds = $.parseJSON('<?php echo $sched ?>');
 console.log(scheds);  // Revisa el formato del JSON en la consola
 
 $(function(){
+    // Establecer la fecha mínima para los campos de fecha (no permitir seleccionar la fecha actual ni pasadas)
+    var today = new Date();
+    
+    // Formatear la fecha y hora actual en el formato adecuado para los campos datetime-local
+    var yyyy = today.getFullYear();
+    var mm = today.getMonth() + 1;  // Los meses comienzan desde 0
+    var dd = today.getDate();
+    var hh = today.getHours();
+    var min = today.getMinutes();
+
+    // Asegurarse de que los meses y días tengan dos dígitos (formato correcto para datetime-local)
+    if (mm < 10) mm = '0' + mm;
+    if (dd < 10) dd = '0' + dd;
+    if (hh < 10) hh = '0' + hh;
+    if (min < 10) min = '0' + min;
+
+    // Crear el formato de la fecha y hora en el formato adecuado para datetime-local
+    var currentDateTime = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + min;
+
+    // Asignar el valor mínimo para los inputs
+    document.getElementById('datetime_start').setAttribute('min', currentDateTime);
+    document.getElementById('datetime_end').setAttribute('min', currentDateTime);
+
     // Inicializar el formulario de reserva
     $('#add_sched').submit(function(e){
         e.preventDefault();
         start_loader();
         $('#add_sched .err-msg').remove();
 
+        // Obtener los valores de los campos de inicio y fin de la reserva
+        var datetime_start = $('#datetime_start').val();
+        var datetime_end = $('#datetime_end').val();
+
+        // Convertir los valores a objetos Date
+        var startDate = new Date(datetime_start);
+        var endDate = new Date(datetime_end);
+
+        // Validar que las fechas no sean inválidas
+        if (endDate <= startDate) {
+            var el = $('<div class="err-msg alert alert-danger mb-1">')
+                el.text("La fecha y hora del horario no son válidas.");
+            $('#add_sched').prepend(el);
+            el.show('slow');
+            end_loader();
+            return false;
+        }
+
+        // Comprobar que el nuevo horario no se solape con reservas existentes
+        var conflictFound = false;
+        scheds.forEach(function(reservation) {
+            var reservedStart = new Date(reservation.datetime_start);
+            var reservedEnd = new Date(reservation.datetime_end);
+
+            // Verificar si el nuevo horario se solapa con alguna reserva existente
+            if ((startDate < reservedEnd && endDate > reservedStart)) {
+                conflictFound = true;
+            }
+        });
+
+        if (conflictFound) {
+            var el = $('<div class="err-msg alert alert-danger mb-1">')
+                el.text("El horario entra en conflicto con otros horarios.");
+            $('#add_sched').prepend(el);
+            el.show('slow');
+            end_loader();
+            return false;
+        }
+
+        // Si no hay conflictos, proceder con el envío del formulario
         $.ajax({
             url:_base_url_+'classes/Master.php?f=save_schedule',
             method:"POST",

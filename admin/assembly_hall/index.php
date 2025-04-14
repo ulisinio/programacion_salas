@@ -75,32 +75,42 @@
 	</div>
 </div>
 <script>
-	$(document).ready(function(){
-		$('.delete_data').click(function(){
-			_conf("¿Estás segur@ de eliminar esta Sala?","delete_assembly_hall",[$(this).attr('data-id')])
-		})
-		$('.table').dataTable();
-	})
-	function delete_assembly_hall($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_assembly_hall",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("Ocurrió un error.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("Ocurrió un error.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
+$(document).ready(function(){
+    $('.delete_data').click(function(){
+        _conf("Esta acción eliminará la sala de forma permanente. ¿Deseas continuar?", "delete_assembly_hall", [$(this).attr('data-id')]);
+    });
+    $('.table').dataTable();
+});
+
+function delete_assembly_hall($id){
+    start_loader();
+    $.ajax({
+        url: _base_url_ + "classes/Master.php?f=delete_assembly_hall",
+        method: "POST",
+        data: {id: $id},
+        dataType: "json",
+        error: function(err) {
+            console.log(err);
+            alert_toast("La sala no se puede eliminar por que hay reservas asignadas a la sala.", 'error');
+            end_loader();
+        },
+        success: function(resp) {
+            if (typeof resp === 'object') {
+                if (resp.status === 'success') {
+                    // Si la eliminación es exitosa, recargar la página
+                    alert_toast("Sala eliminada exitosamente.", 'success');
+                    location.reload();
+                } else if (resp.status === 'failed' && resp.msg) {
+                    // Si la respuesta indica que hay reservas
+                    alert_toast(resp.msg, 'error');
+                    end_loader();
+                } else {
+                    // Otro error genérico
+                    alert_toast("La sala no se puede eliminar por que hay reservas futuras.", 'error');
+                    end_loader();
+                }
+            }
+        }
+    });
+}
 </script>

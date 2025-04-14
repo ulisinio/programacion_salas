@@ -6,8 +6,8 @@
 
 <style>
 	img#cimg{
-		height: 15vh;
-		width: 15vh;
+		height: 25vh;
+		width: 25vh;
 		object-fit: cover;
 		border-radius: 100% 100%;
 	}
@@ -30,16 +30,16 @@
 			<form action="" id="system-frm">
 				<div id="msg" class="form-group"></div>
 				<div class="form-group">
-					<label for="name" class="control-label">Nombre del Sistema</label>
+					<label for="name" class="control-label">Nombre del Sistema:</label>
 					<input type="text" class="form-control form-control-sm" name="name" id="name" value="<?php echo $_settings->info('name') ?>">
 				</div>
 				<div class="form-group">
-					<label for="short_name" class="control-label">Nombre Corto Sistema</label>
+					<label for="short_name" class="control-label">Nombre de la Empresa:</label>
 					<input type="text" class="form-control form-control-sm" name="short_name" id="short_name" value="<?php echo  $_settings->info('short_name') ?>">
 				</div>
 			
 			<div class="form-group">
-				<label for="" class="control-label">Logo Sistema</label>
+				<label for="" class="control-label">Logo Sistema:</label>
 				<div class="custom-file">
 	              <input type="file" class="custom-file-input rounded-circle" id="customFile" name="img" onchange="displayImg(this,$(this))">
 	              <label class="custom-file-label" for="customFile">Escoger archivo</label>

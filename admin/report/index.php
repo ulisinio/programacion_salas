@@ -28,7 +28,7 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
                 <div class="form-group col-3">
                     <label for="aid" class="control-label">Sala</label>
                     <select class="custom-select select2" name="aid" id="aid">
-                        <option value="0" <?php echo $rid ==  0 ? "selected" : "" ?>>All</option>
+                        <option value="0" <?php echo $rid ==  0 ? "selected" : "" ?>>Todas las salas</option>
                         <?php 
                         $aqry = $conn->query("SELECT * FROM `assembly_hall` order by room_name asc");
                         while($row= $aqry->fetch_assoc()):
@@ -38,7 +38,7 @@ $rid = isset($_GET['aid']) ? $_GET['aid'] : 0;
                     </select>
                 </div>
                 <div class="form-group col-3">
-                    <button class="btn btn-flat btn-primary"><span class="fas fa-filter"></span>  Filtro</button>
+                    <button class="btn btn-flat btn-primary"><span class="fas fa-filter"></span>  Aplicar Filtro</button>
                     <button type="button" id="print_now" class="btn btn-flat btn-success"><span class="fas fa-print"></span>  Imprimir</button>
                 </div>
             </div>

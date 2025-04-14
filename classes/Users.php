@@ -37,7 +37,7 @@ Class Users extends DBConnection {
 		if(empty($id)){
 			$qry = $this->conn->query("INSERT INTO users set {$data}");
 			if($qry){
-				$this->settings->set_flashdata('success','User Details successfully saved.');
+				$this->settings->set_flashdata('success','Detalles del usuario guardados exitosamente.'); // Cambio aquí
 				foreach($_POST as $k => $v){
 					if($k != 'id'){
 						if(!empty($data)) $data .=" , ";
@@ -52,7 +52,7 @@ Class Users extends DBConnection {
 		}else{
 			$qry = $this->conn->query("UPDATE users set $data where id = {$id}");
 			if($qry){
-				$this->settings->set_flashdata('success','User Details successfully updated.');
+				$this->settings->set_flashdata('success','Detalles del usuario actualizados exitosamente.'); // Cambio aquí
 				foreach($_POST as $k => $v){
 					if($k != 'id'){
 						if(!empty($data)) $data .=" , ";
@@ -73,7 +73,7 @@ Class Users extends DBConnection {
 		extract($_POST);
 		$qry = $this->conn->query("DELETE FROM users where id = $id");
 		if($qry){
-			$this->settings->set_flashdata('success','User Details successfully deleted.');
+			$this->settings->set_flashdata('success','Detalles del usuario eliminados exitosamente.'); // Cambio aquí
 			return 1;
 		}else{
 			return false;
@@ -105,7 +105,7 @@ Class Users extends DBConnection {
 			$save = $this->conn->query($sql);
 
 			if($save){
-			$this->settings->set_flashdata('success','User Details successfully updated.');
+			$this->settings->set_flashdata('success','Detalles del usuario actualizados exitosamente.'); // Cambio aquí
 			foreach($_POST as $k => $v){
 				if(!in_array($k,array('id','password'))){
 					if(!empty($data)) $data .=" , ";
@@ -148,7 +148,7 @@ Class Users extends DBConnection {
 			$save = $this->conn->query($sql);
 
 			if($save){
-			$this->settings->set_flashdata('success','User Details successfully updated.');
+			$this->settings->set_flashdata('success','Detalles del usuario actualizados exitosamente.'); // Cambio aquí
 			foreach($_POST as $k => $v){
 				if(!in_array($k,array('id','password'))){
 					if(!empty($data)) $data .=" , ";
@@ -186,3 +186,4 @@ switch ($action) {
 		// echo $sysset->index();
 		break;
 }
+?>

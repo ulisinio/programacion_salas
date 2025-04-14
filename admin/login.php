@@ -1,7 +1,7 @@
 <?php require_once('../config.php') ?>
 <!DOCTYPE html>
 <html lang="en" class="" style="height: auto;">
- <?php require_once('inc/header.php') ?>
+  <?php require_once('inc/header.php') ?>
 <body class="hold-transition login-page ">
   <script>
     start_loader()
@@ -26,10 +26,10 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" name="password" placeholder="Contraseña">
+          <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-lock"></span>
+              <span class="fas fa-eye" id="toggle-password" style="cursor: pointer;"></span>
             </div>
           </div>
         </div>
@@ -45,11 +45,6 @@
         </div>
       </form>
       <!-- /.social-auth-links -->
-
-      <!-- <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p> -->
-      
     </div>
     <!-- /.card-body -->
   </div>
@@ -67,7 +62,18 @@
 <script>
   $(document).ready(function(){
     end_loader();
+    
+    // Función para alternar la visibilidad de la contraseña
+    $('#toggle-password').click(function() {
+      var passwordField = $('#password');
+      var type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+      passwordField.attr('type', type);
+
+      // Alternar el icono entre ojo cerrado y abierto
+      $(this).toggleClass('fas fa-eye fas fa-eye-slash');
+    });
   })
 </script>
+
 </body>
 </html>

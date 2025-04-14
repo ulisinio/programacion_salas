@@ -38,6 +38,11 @@ class Usuaritos extends DBConnection {
         $_POST['lastname'] = addslashes(htmlentities($_POST['lastname']));
         $_POST['username'] = addslashes(htmlentities($_POST['username']));
 
+        // Si el rol es Administrador (role = 1), asignar un avatar por defecto
+        if ($role == 1) {
+            $_POST['avatar'] = 'uploads/1744129680_1740071460_User_icon_2.svg.png';  // Ruta del avatar por defecto
+        }
+
         // Si la contraseña no está vacía, la encriptamos con MD5
         if (!empty($_POST['password'])) {
             $_POST['password'] = md5($_POST['password']);  // Encriptamos la contraseña con MD5

@@ -20,20 +20,21 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                 <input name="room_name" id="" class="form-control form no-resize" value="<?php echo isset($room_name) ? $room_name : ''; ?>" />
 			</div>
 			<div class="form-group">
-				<label for="location" class="control-label">Ubiación</label>
+				<label for="location" class="control-label">Ubicación</label>
                 <textarea name="location" id="" cols="30" rows="2" class="form-control form no-resize"><?php echo isset($location) ? $location : ''; ?></textarea>
 			</div>
 			<div class="form-group">
 				<label for="description" class="control-label">Descripción</label>
                 <textarea name="description" id="" cols="30" rows="2" class="form-control form no-resize"><?php echo isset($description) ? $description : ''; ?></textarea>
 			</div>
-            <div class="form-group">
-				<label for="status" class="control-label">Estado</label>
-               	<select name="status" id="status" class="custom-select">
-					   <option value="1" <?php echo isset($status) && $status == 1 ? "selected" : "" ?>>Activa</option>
-					   <option value="0" <?php echo isset($status) && $status == 10 ? "selected" : "" ?>>Inactiva</option>
-				   </select>
-			</div>
+			<div class="form-group">
+    <label for="status" class="control-label">Estado</label>
+    <select name="status" id="status" class="custom-select">
+        <option value="1" <?php echo isset($status) && $status == 1 ? "selected" : "" ?>>Activa</option>
+        <option value="0" <?php echo isset($status) && $status == 0 ? "selected" : "" ?>>Inactiva</option>
+    </select>
+</div>
+
 		</form>
 	</div>
 	<div class="card-footer">

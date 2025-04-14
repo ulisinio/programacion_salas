@@ -1,19 +1,17 @@
 <style>
-  .user-img{
-        position: absolute;
-        height: 27px;
-        width: 27px;
-        object-fit: cover;
-        left: -7%;
-        top: -12%;
+  .user-img {
+    height: 20px;
+    width: 20px;
+    object-fit: cover;
+    border-radius: 50%; /* Para hacerla redonda */
   }
-  .btn-rounded{
-        border-radius: 50px;
+  .btn-rounded {
+    border-radius: 50px;
   }
 </style>
 
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-navy border border-light border-top-0  border-left-0 border-right-0 navbar-dark text-sm">
+<nav class="main-header navbar navbar-expand navbar-navy border border-light border-top-0 border-left-0 border-right-0 navbar-dark text-sm">
   <!-- Left navbar links -->
   <ul class="navbar-nav">
     <li class="nav-item">
@@ -32,7 +30,15 @@
     <li class="nav-item">
       <div class="btn-group nav-link">
         <button type="button" class="btn btn-rounded badge badge-light dropdown-toggle dropdown-icon" data-toggle="dropdown">
-          <span class="ml-3"><?php echo ucwords($_settings->userdata('firstname').' '.$_settings->userdata('lastname')) ?></span>
+          <!-- Aquí se agrega la imagen dentro del span si existe -->
+          <?php
+          $avatar = $_settings->userdata('avatar'); // Recupera el avatar del usuario
+          if ($avatar) {
+              // Si tiene avatar, mostrar la imagen dentro del span
+              echo '<img src="' . base_url . '/' . $avatar . '" class="user-img" alt="User Image">';
+          }
+          ?>
+          <span class="ml-1"><?php echo ucwords($_settings->userdata('firstname').' '.$_settings->userdata('lastname')) ?></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <div class="dropdown-menu" role="menu" id="userDropdownMenu">
