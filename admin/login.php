@@ -6,6 +6,10 @@
   <script>
     start_loader()
   </script>
+    <div class="text-center">
+  <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="Logo del sistema" style="max-height:80px;">
+</div>
+<br>
   <div class="container mb-4">
     <h2 class="text-center"><?php echo $_settings->info('name') ?></h2>
   </div>
@@ -51,7 +55,8 @@
   <!-- /.card -->
 </div>
 <!-- /.login-box -->
-
+ <br>
+<p>Depto. Ciberseguridad y Tecnologías de la información.</p>
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->

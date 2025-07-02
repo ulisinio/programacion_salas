@@ -9,6 +9,15 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
         }
     }
 }
+
+// Cargar todas las reservas existentes excepto la actual
+$sched_qry = $conn->query("SELECT * FROM `schedule_list` WHERE id != '{$_GET['id']}'");
+$sched_data = array();
+while($row = $sched_qry->fetch_assoc()){
+    $sched_data[] = $row;
+}
+$scheds = json_encode($sched_data);
+$scheds = addslashes($scheds);
 ?>
 <style>
 #uni_modal .modal-content>.modal-footer{
@@ -55,41 +64,87 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
     <button class="btn btn-flat btn-primary mr-2" form="edit_sched">Actualizar</button>
     <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Cerrar</button>
 </div>
+
 <script>
-    $(function(){
-        $('#edit_sched').submit(function(e){
-			e.preventDefault()
-			start_loader()
-			$('#edit_sched .err-msg').remove()
-			$.ajax({
-				url:_base_url_+'classes/Master.php?f=save_schedule',
-				method:"POST",
-				data: $(this).serialize(),
-				dataType:"json",
-				error:err=>{
-					console.log(err)
-					end_loader()
-					alert_toast("An error occured","error");
-				},
-				success:function(resp){
-					if(resp.status == 'success'){
-						location.reload()
-					}else if(resp.status == 'failed' && !!resp.err_msg){
-						var el = $('<div class="err-msg alert alert-danger mb-1">')
-							el.text(resp.err_msg)
-						$('#edit_sched').prepend(el)
-							el.show('slow')
-					}else{
-						console.log(resp)
-						alert_toast("An error occured","error");
-					}
-					end_loader();
-				}
-			})
-		})
-        $('#uni_modal').on('hidden.bs.modal',function(){
-            if($(this).find('form#edit_sched').length > 0)
-            uni_modal("Detalles de Reserva","schedules/view_details.php?id=<?php echo $_GET['id'] ?>")
-        })
-    })
+var existingReservations = $.parseJSON('<?php echo $scheds ?>');
+
+$(function(){
+    $('#edit_sched').submit(function(e){
+        e.preventDefault();
+        start_loader();
+        $('#edit_sched .err-msg').remove();
+
+        var datetime_start = $('#datetime_start').val();
+        var datetime_end = $('#datetime_end').val();
+        var selected_room = $('#assembly_hall_id').val();
+        var startDate = new Date(datetime_start);
+        var endDate = new Date(datetime_end);
+
+        if (endDate <= startDate) {
+            var el = $('<div class="err-msg alert alert-danger mb-1">')
+                .text("La fecha y hora del horario no son válidas.");
+            $('#edit_sched').prepend(el);
+            el.show('slow');
+            end_loader();
+            return false;
+        }
+
+        var conflictFound = false;
+
+        existingReservations.forEach(function(res) {
+            // Solo comparar reservas de la misma sala
+            if (String(res.assembly_hall_id) !== String(selected_room)) return;
+
+            var reservedStart = new Date(res.datetime_start);
+            var reservedEnd = new Date(res.datetime_end);
+
+            // Validar solapamiento de horarios
+            if ((startDate < reservedEnd && endDate > reservedStart)) {
+                conflictFound = true;
+            }
+        });
+
+        if (conflictFound) {
+            var el = $('<div class="err-msg alert alert-danger mb-1">')
+                .text("Este horario ya está reservado en la sala seleccionada.");
+            $('#edit_sched').prepend(el);
+            el.show('slow');
+            end_loader();
+            return false;
+        }
+
+        // Si todo bien, enviar el formulario
+        $.ajax({
+            url: _base_url_ + 'classes/Master.php?f=save_schedule',
+            method: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                end_loader()
+                alert_toast("Ocurrió un error", "error");
+            },
+            success: function(resp){
+                if (resp.status == 'success') {
+                    location.reload();
+                } else if (resp.status == 'failed' && !!resp.err_msg) {
+                    var el = $('<div class="err-msg alert alert-danger mb-1">')
+                        .text(resp.err_msg);
+                    $('#edit_sched').prepend(el);
+                    el.show('slow');
+                } else {
+                    alert_toast("Ocurrió un error", "error");
+                }
+                end_loader();
+            }
+        });
+    });
+
+    $('#uni_modal').on('hidden.bs.modal', function(){
+        if($(this).find('form#edit_sched').length > 0)
+            uni_modal("Detalles de Reserva", "schedules/view_details.php?id=<?php echo $_GET['id'] ?>")
+    });
+
+    $('.select2').select2({placeholder: "Selecciona una sala"});
+});
 </script>

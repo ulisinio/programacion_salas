@@ -10,7 +10,6 @@
     <div class="card-body">
         <div class="container-fluid">
 
-            <!-- 👇 Aquí insertamos el toast flash dinámico desde PHP a JS -->
             <?php if (isset($_settings) && $_settings->chk_flashdata('success')): ?>
                 <script>
                     $(function(){
@@ -22,10 +21,12 @@
             <table class="table table-bordered table-striped">
                 <colgroup>
                     <col width="5%">
-                    <col width="25%">
-                    <col width="25%">
-                    <col width="25%">
+                    <col width="10%"> <!-- reducido -->
+                    <col width="10%"> <!-- reducido -->
+                    <col width="15%">
                     <col width="10%">
+                    <col width="15%">
+                    <col width="15%">
                     <col width="10%">
                 </colgroup>
                 <thead>
@@ -35,12 +36,13 @@
                         <th>Apellido</th>
                         <th>Usuario</th>
                         <th>Rol</th>
-                        <th>Acción</th>
+                        <th>Creado</th>
+                        <th>Última Modificación</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    $i = 1;
                     $stmt = $conn->prepare("SELECT * FROM users ORDER BY id ASC");
                     $stmt->execute();
                     $qry = $stmt->get_result();
@@ -59,24 +61,28 @@
                                 <?php endif; ?>
                             </td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                    Acción
-                                </button>
-                                <div class="dropdown-menu" role="menu">
-                                    <a class="dropdown-item" href="?page=users/manage_user&id=<?php echo htmlspecialchars($row['id']); ?>">
-                                        <span class="fa fa-edit text-primary"></span> Editar
+                                <?php
+                                    $created_at = date("d/m/Y h:i A", strtotime($row['created_at']));
+                                    echo htmlspecialchars($created_at);
+                                ?>
+                            </td>
+                            <td class="text-center">
+                                <?php
+                                    $updated_at = date("d/m/Y h:i A", strtotime($row['updated_at']));
+                                    echo htmlspecialchars($updated_at);
+                                ?>
+                            </td>
+                            <td class="text-center">
+                                <a href="?page=users/manage_user&id=<?php echo htmlspecialchars($row['id']); ?>" class="text-primary mx-1" title="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <?php if ($row['id'] != 1): ?>
+                                    <a href="javascript:void(0)" class="text-danger mx-1 delete_data" data-id="<?php echo htmlspecialchars($row['id']); ?>" title="Eliminar">
+                                        <i class="fa fa-trash"></i>
                                     </a>
-                                    <div class="dropdown-divider"></div>
-                                    <?php if ($row['id'] != 1): ?>
-                                        <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo htmlspecialchars($row['id']); ?>">
-                                            <span class="fa fa-trash text-danger"></span> Eliminar
-                                        </a>
-                                    <?php else: ?>
-                                        <a class="dropdown-item disabled">
-                                            <span class="fa fa-trash text-muted"></span> Eliminar
-                                        </a>
-                                    <?php endif; ?>
-                                </div>
+                                <?php else: ?>
+                                    <i class="fa fa-trash text-muted mx-1" title="Eliminar (deshabilitado)"></i>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -86,7 +92,6 @@
     </div>
 </div>
 
-<!-- Script para eliminar un usuario -->
 <script>
 $(document).ready(function(){
     $('.delete_data').click(function(){

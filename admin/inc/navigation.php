@@ -1,4 +1,3 @@
-
 </style>
 
 <!-- Main Sidebar Container -->
@@ -20,21 +19,15 @@
     <div class="os-padding">
       <div class="os-viewport os-viewport-native-scrollbars-invisible" style="overflow-y: scroll;">
         <div class="os-content" style="padding: 0px 8px; height: 100%; width: 100%;">
-          <!-- Sidebar user panel (optional) -->
-          <div class="clearfix"></div>
+
           <!-- Sidebar Menu -->
           <nav class="mt-4">
             <ul class="nav nav-pills nav-sidebar flex-column text-sm nav-compact nav-flat nav-child-indent nav-collapse-hide-child" data-widget="treeview" role="menu" data-accordion="false">
+              <!-- Visible para todos -->
               <li class="nav-item dropdown">
                 <a href="./" class="nav-link nav-home">
                   <i class="nav-icon fas fa-tachometer-alt"></i>
                   <p>Dashboard</p>
-                </a>
-              </li> 
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>admin/?page=assembly_hall" class="nav-link nav-assembly_hall">
-                  <i class="nav-icon fas fa-door-open"></i>
-                  <p>Lista de Salas</p>
                 </a>
               </li>
               <li class="nav-item dropdown">
@@ -44,28 +37,39 @@
                 </a>
               </li>
               <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=vehicles" class="nav-link nav-vehicles">
+                  <i class="nav-icon fas fa-car"></i>
+                  <p>Recorridos</p>
+                </a>
+              </li>
+              <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>admin/?page=report" class="nav-link nav-report">
                   <i class="nav-icon fas fa-th-list"></i>
                   <p>Reporte de Reservas</p>
                 </a>
               </li>
-              
-              <!-- Solo mostrar si es ADMIN -->
-              <?php if ($_settings->userdata('role') == 1): ?>
-                <li class="nav-item dropdown">
-                  <a href="<?php echo base_url ?>admin/?page=users" class="nav-link nav-users">
-                    <i class="nav-icon fas fa-users"></i>
-                    <p>Usuarios</p>
-                  </a>
-                </li>
 
-                <li class="nav-header">Mantenimiento</li>
-                <li class="nav-item dropdown">
-                  <a href="<?php echo base_url ?>admin/?page=system_info" class="nav-link nav-system_info">
-                    <i class="nav-icon fas fa-cogs"></i>
-                    <p>Configuraciones</p>
-                  </a>
-                </li>
+              <!-- Solo para ADMIN -->
+              <?php if ($_settings->userdata('role') == 1): ?>
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=assembly_hall" class="nav-link nav-assembly_hall">
+                  <i class="nav-icon fas fa-door-open"></i>
+                  <p>Lista de Salas y Vehículos</p>
+                </a>
+              </li>
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=users" class="nav-link nav-users">
+                  <i class="nav-icon fas fa-users"></i>
+                  <p>Usuarios</p>
+                </a>
+              </li>
+              <li class="nav-header">Mantenimiento</li>
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=system_info" class="nav-link nav-system_info">
+                  <i class="nav-icon fas fa-cogs"></i>
+                  <p>Configuraciones</p>
+                </a>
+              </li>
               <?php endif; ?>
             </ul>
           </nav>
@@ -94,18 +98,18 @@
     var s = '<?php echo isset($_GET['s']) ? $_GET['s'] : '' ?>';
     page = page.split('/');
     page = page[0];
-    if(s!='')
-      page = page+'_'+s;
+    if(s != '')
+      page = page + '_' + s;
 
-    if($('.nav-link.nav-'+page).length > 0){
-      $('.nav-link.nav-'+page).addClass('active')
-      if($('.nav-link.nav-'+page).hasClass('tree-item') == true){
-        $('.nav-link.nav-'+page).closest('.nav-treeview').siblings('a').addClass('active')
-        $('.nav-link.nav-'+page).closest('.nav-treeview').parent().addClass('menu-open')
+    if($('.nav-link.nav-' + page).length > 0){
+      $('.nav-link.nav-' + page).addClass('active');
+      if($('.nav-link.nav-' + page).hasClass('tree-item')){
+        $('.nav-link.nav-' + page).closest('.nav-treeview').siblings('a').addClass('active');
+        $('.nav-link.nav-' + page).closest('.nav-treeview').parent().addClass('menu-open');
       }
-      if($('.nav-link.nav-'+page).hasClass('nav-is-tree') == true){
-        $('.nav-link.nav-'+page).parent().addClass('menu-open')
+      if($('.nav-link.nav-' + page).hasClass('nav-is-tree')){
+        $('.nav-link.nav-' + page).parent().addClass('menu-open');
       }
     }
-  })
+  });
 </script>
